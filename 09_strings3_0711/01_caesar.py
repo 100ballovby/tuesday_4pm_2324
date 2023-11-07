@@ -17,7 +17,7 @@ print(encrypted)
 
 for shift in range(1, 27):
     decrypted = ''
-    for char in text:
+    for char in encrypted:
         if char.isalpha():
             shift_amount = shift % 26
             if char.islower():
