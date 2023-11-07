@@ -16,5 +16,16 @@ for char in text:
 print(encrypted)
 
 for shift in range(1, 27):
-# перебрать все варианты ключей и вывести все варианты фраз,
-# помните, что сдвиг в обратную сторону
+    decrypted = ''
+    for char in text:
+        if char.isalpha():
+            shift_amount = shift % 26
+            if char.islower():
+                shifted_char = chr(((ord(char) - ord('a') - shift_amount) % 26) + ord('a'))
+            else:
+                shifted_char = chr(((ord(char) - ord('A') - shift_amount) % 26) + ord('A'))
+            decrypted += shifted_char  # добавляю сдвинутую букву к строке
+        else:
+            decrypted += char
+
+    print(f'Test {shift}: {decrypted}')
