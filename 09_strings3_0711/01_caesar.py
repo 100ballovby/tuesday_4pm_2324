@@ -14,3 +14,7 @@ for char in text:
         encrypted += char
 
 print(encrypted)
+
+for shift in range(1, 27):
+# перебрать все варианты ключей и вывести все варианты фраз,
+# помните, что сдвиг в обратную сторону
