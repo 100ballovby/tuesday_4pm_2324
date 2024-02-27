@@ -3,8 +3,6 @@ import sys
 
 import pygame as pg
 
-import game_functions as gf
-
 pg.init()  # это находится наверху и инициализирует библиотеку
 
 # ЦВЕТА
@@ -42,4 +40,4 @@ while True:  # главный цикл игры
 	pg.display.update()  # должен оставаться последним из отображений
 
 	# здесь обрабатываем логику игры
-	gf.non_playable_obj_move(apple, speed_y)
+    gf.non_playable_obj_move(apple, player, screen, speed_y)
