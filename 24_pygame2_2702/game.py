@@ -24,6 +24,8 @@ clock = pg.time.Clock()
 speed = 2
 apple_speed = speed * 5
 player_speed = 0
+missed_apples = 0
+score = 0
 
 # игровые объекты
 player = pg.Rect(0, S_HEIGHT - 50, S_WIDTH * 0.12, S_HEIGHT * 0.04)
@@ -42,6 +44,7 @@ while True:  # главный цикл игры
     pg.draw.circle(screen, RED, (apple.x, apple.y), 20)
 
     pg.display.update()  # должен оставаться последним из отображений
+
     # здесь обрабатываем логику игры
     keys = pg.key.get_pressed()
     if keys[pg.K_LEFT]:  # если в списке нажатых кнопок кнопке K_LEFT соответствует значение True
@@ -52,4 +55,15 @@ while True:  # главный цикл игры
         player_speed = 0
 
     gf.player_motion(player, screen, player_speed)
-    gf.non_playable_obj_move(apple, player, screen, apple_speed)
+    apple_catch = gf.non_playable_obj_move(apple, player, screen, apple_speed)
+
+    if apple_catch == 'miss':
+        missed_apples += 1
+    elif apple_catch == 'catch':
+        score += 10
+
+    print('Score:', score)
+    print('Missed apples:', missed_apples)
+
+    if missed_apples >= 3:
+        sys.exit()
