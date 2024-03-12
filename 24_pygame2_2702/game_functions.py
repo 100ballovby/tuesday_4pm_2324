@@ -40,3 +40,18 @@ def player_motion(obj, screen, speed_x):
 		obj.right = screen_rect.right  # правая часть игрока фиксируется около правой части экрана
 	elif obj.left <= screen_rect.left:
 		obj.left = screen_rect.left
+
+
+def draw_button(screen, text, x, y, w, h, color):
+	import pygame as pg
+	mouse_pos = pg.mouse.get_pos()  # фиксируем позицию курсора мыши
+	click = pg.mouse.get_pressed()  # определяем, нажали ли на кнопку мыши (любую)
+	button_rect = pg.Rect(x, y, w, h)
+	if button_rect.collidepoint(mouse_pos):  # если курсор мыши находится над кнопкой
+		if click[0]:
+			return 'Start'
+		color = (color[0] - 50, color[1] - 50, color[2] - 50)
+	pg.draw.rect(screen, color, button_rect)
+	text_surf = text.render('start', True, (0, 0, 0))
+	text_rect = text_surf.get_rect(center=button_rect.center)
+	screen.blit(text_surf, text_rect)
