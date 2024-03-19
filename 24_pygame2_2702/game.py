@@ -36,6 +36,8 @@ apple_speed = speed * 5
 player_speed = 0
 missed_apples = 0
 score = 0
+paused = False
+
 
 # игровые объекты
 player = pg.Rect(0, S_HEIGHT - 50, S_WIDTH * 0.12, S_HEIGHT * 0.04)
@@ -45,43 +47,59 @@ apple = pg.Rect(random.randint(50, S_WIDTH - 50), 40, 40, 40)
 # print(pg.font.get_fonts()) <- список установленных шрифтов
 pg.display.update()  # если на экране игры нужно что-то показать до начала игры
 while True:  # главный цикл игры
+    if missed_apples >= 3:
+        paused = True
+        score = 0
+        missed_apples = 0
+
     for event in pg.event.get():  # отслеживает события в игре
         if event.type == pg.QUIT:  # если окно игры закрывают крестиком
             sys.exit()  # завершить игру
+        elif event.type == pg.MOUSEBUTTONDOWN:
+            if paused and 'Start' == gf.draw_button(screen, score_font, S_WIDTH // 2,
+                                                    S_HEIGHT // 2, 100, 70, (200, 120, 80)):
+                paused = False
 
     clock.tick(FPS)  # сменяет кадры в игре
     screen.fill(WHITE)
-    pg.draw.rect(screen, BROWN, player)
-    pg.draw.circle(screen, RED, (apple.x, apple.y), 20)
 
-    score_text = score_font.render('Score: ' + str(score), True, (0, 0, 180))
-    screen.blit(score_text, (10, 20))
-    lives = 3 - missed_apples
-    msg = ''
-    for i in range(lives):
-        msg += ' * '
-    missed_text = score_font.render('Lives: ' + msg, True, (0, 0, 180))
-    screen.blit(missed_text, (10, 50))
+    # отображение информации
+    if paused:
+        # отображать текст о паузе
+        text_surface = score_font.render('You lost!', True, (255, 255, 0))
+        text_rect = text_surface.get_rect(center=(S_WIDTH // 2, S_HEIGHT // 2 - 50))
+        screen.blit(text_surface, text_rect)
+        gf.draw_button(screen, score_font, S_WIDTH * 0.456,
+                       S_HEIGHT // 2, 100, 70, (200, 120, 80))
+        pg.display.update()
+    else:
+        pg.draw.rect(screen, BROWN, player)
+        pg.draw.circle(screen, RED, (apple.x, apple.y), 20)
 
+        score_text = score_font.render('Score: ' + str(score), True, (0, 0, 180))
+        screen.blit(score_text, (10, 20))
+        lives = 3 - missed_apples
+        msg = ''
+        for i in range(lives):
+            msg += ' * '
+        missed_text = score_font.render('Lives: ' + msg, True, (0, 0, 180))
+        screen.blit(missed_text, (10, 50))
 
-    pg.display.update()  # должен оставаться последним из отображений
+        pg.display.update()  # должен оставаться последним из отображений
 
-    # здесь обрабатываем логику игры
-    keys = pg.key.get_pressed()
-    if keys[pg.K_LEFT]:  # если в списке нажатых кнопок кнопке K_LEFT соответствует значение True
-        player_speed -= speed
-    elif keys[pg.K_RIGHT]:
-        player_speed += speed
-    else:  # когда все кнопки отпущены
-        player_speed = 0
+        # здесь обрабатываем логику игры
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:  # если в списке нажатых кнопок кнопке K_LEFT соответствует значение True
+            player_speed -= speed
+        elif keys[pg.K_RIGHT]:
+            player_speed += speed
+        else:  # когда все кнопки отпущены
+            player_speed = 0
 
-    gf.player_motion(player, screen, player_speed)
-    apple_catch = gf.non_playable_obj_move(apple, player, screen, apple_speed)
+        gf.player_motion(player, screen, player_speed)
+        apple_catch = gf.non_playable_obj_move(apple, player, screen, apple_speed)
 
-    if apple_catch == 'miss':
-        missed_apples += 1
-    elif apple_catch == 'catch':
-        score += 10
-
-    if missed_apples >= 3:
-        sys.exit()
+        if apple_catch == 'miss':
+            missed_apples += 1
+        elif apple_catch == 'catch':
+            score += 10
