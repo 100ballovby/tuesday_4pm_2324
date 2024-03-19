@@ -40,9 +40,19 @@ paused = False
 
 
 # игровые объекты
-player = pg.Rect(0, S_HEIGHT - 50, S_WIDTH * 0.12, S_HEIGHT * 0.04)
+player_img = pg.image.load('bowl.png').convert_alpha()
+player_img = pg.transform.scale(player_img, (120, 40))
+apple_img = pg.image.load('apple.png').convert_alpha()
+bg_image = pg.image.load('bg.jpg').convert()
+heart_img = pg.image.load('heart.png').convert_alpha()
+heart_img = pg.transform.scale(heart_img, (50, 50))
+heart_rect = heart_img.get_rect()
+
+player = player_img.get_rect()
 player.centerx = S_WIDTH // 2  # centerx устанавливает положение ЦЕНТРА объекта по горизонтали
-apple = pg.Rect(random.randint(50, S_WIDTH - 50), 40, 40, 40)
+player.y = S_HEIGHT - 50
+apple = apple_img.get_rect()
+apple.x, apple.y = random.randint(50, S_WIDTH - 50), -20
 
 # print(pg.font.get_fonts()) <- список установленных шрифтов
 pg.display.update()  # если на экране игры нужно что-то показать до начала игры
@@ -61,7 +71,8 @@ while True:  # главный цикл игры
                 paused = False
 
     clock.tick(FPS)  # сменяет кадры в игре
-    screen.fill(WHITE)
+    # screen.fill(WHITE)
+    screen.blit(bg_image, (0, 0))
 
     # отображение информации
     if paused:
@@ -73,17 +84,20 @@ while True:  # главный цикл игры
                        S_HEIGHT // 2, 100, 70, (200, 120, 80))
         pg.display.update()
     else:
-        pg.draw.rect(screen, BROWN, player)
-        pg.draw.circle(screen, RED, (apple.x, apple.y), 20)
+        # pg.draw.rect(screen, BROWN, player)
+        # pg.draw.circle(screen, RED, (apple.x, apple.y), 20)
+        screen.blit(player_img, player)
+        screen.blit(apple_img, apple)
 
-        score_text = score_font.render('Score: ' + str(score), True, (0, 0, 180))
-        screen.blit(score_text, (10, 20))
+        score_text = score_font.render('Score: ' + str(score), True, (255, 255, 255))
+        screen.blit(score_text, (10, 60))
         lives = 3 - missed_apples
-        msg = ''
         for i in range(lives):
-            msg += ' * '
-        missed_text = score_font.render('Lives: ' + msg, True, (0, 0, 180))
-        screen.blit(missed_text, (10, 50))
+            heart_rect.x = 10 + (i * heart_rect.width)
+            heart_rect.y = 5
+            screen.blit(heart_img, heart_rect)
+        # missed_text = score_font.render('Lives: ' + msg, True, (0, 0, 180))
+        #screen.blit(missed_text, (10, 50))
 
         pg.display.update()  # должен оставаться последним из отображений
 
