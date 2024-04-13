@@ -16,6 +16,14 @@ def ball_move(obj, s_width, s_height, play_obj, opp):
 		speed_x *= -1
 
 
+def player_motion(obj, s):
+	obj.y += s
+	if obj.top <= 0:  # если ракетка упирается в верхнюю границу экрана
+		obj.top = 0  # она останавливается на этом месте
+	elif obj.bottom >= H:
+		obj.bottom = H
+
+
 pg.init()  # это находится наверху и инициализирует библиотеку
 
 # создаем экран игры
@@ -66,4 +74,13 @@ while True:  # главный цикл игры
 
 	pg.display.update()  # должен оставаться последним из отображений
 
+	keys = pg.key.get_pressed()
+	if keys[pg.K_UP]:
+		p_speed = -speed
+	elif keys[pg.K_DOWN]:
+		p_speed = speed
+	else:
+		p_speed = 0
+
 	ball_move(ball, W, H, player, opponent)
+	player_motion(player, p_speed)
