@@ -2,6 +2,20 @@ import sys
 
 import pygame as pg
 
+
+def ball_move(obj, s_width, s_height, play_obj, opp):
+	global speed_x, speed_y  # из функции можно менять значение этих переменных
+	obj.x += speed_x
+	obj.y += speed_y
+
+	if obj.top <= 0 or obj.bottom >= s_height:
+		speed_y *= -1
+	elif obj.left <= 0 or obj.right >= s_width:
+		speed_x *= -1
+	elif obj.colliderect(play_obj) or obj.colliderect(opp):
+		speed_x *= -1
+
+
 pg.init()  # это находится наверху и инициализирует библиотеку
 
 # создаем экран игры
@@ -30,6 +44,12 @@ player = pg.Rect(W - 30, sc_y, pad_w, pad_h)
 opponent = pg.Rect(10, sc_y, pad_w, pad_h)
 ball = pg.Rect(sc_x - ball_size // 2, sc_y - ball_size // 2, ball_size, ball_size)
 
+speed = 7
+p_speed = 0
+o_speed = 0
+ball_moving = False
+speed_x = speed_y = speed
+
 pg.display.update()  # если на экране игры нужно что-то показать до начала игры
 while True:  # главный цикл игры
 	for event in pg.event.get():  # отслеживает события в игре
@@ -45,3 +65,5 @@ while True:  # главный цикл игры
 	pg.draw.ellipse(screen, VIOLET, ball)
 
 	pg.display.update()  # должен оставаться последним из отображений
+
+	ball_move(ball, W, H, player, opponent)
