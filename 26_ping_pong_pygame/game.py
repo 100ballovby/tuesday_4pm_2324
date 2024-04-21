@@ -16,12 +16,26 @@ def ball_move(obj, s_width, s_height, play_obj, opp):
 		speed_x *= -1
 
 
-def player_motion(obj, s):
+def player_motion(obj, s, win_h):
 	obj.y += s
 	if obj.top <= 0:  # если ракетка упирается в верхнюю границу экрана
 		obj.top = 0  # она останавливается на этом месте
-	elif obj.bottom >= H:
-		obj.bottom = H
+	elif obj.bottom >= win_h:
+		obj.bottom = win_h
+
+
+def opponent_motion(obj, p_obj, s, win_h):
+	if obj.top < p_obj.y:
+		obj.y += s
+	elif obj.bottom > p_obj.y:
+		obj.y -= s
+
+	if obj.top <= 0:
+		obj.top = 0
+	elif obj.bottom >= win_h:
+		obj.bottom = win_h
+
+
 
 
 pg.init()  # это находится наверху и инициализирует библиотеку
@@ -54,7 +68,7 @@ ball = pg.Rect(sc_x - ball_size // 2, sc_y - ball_size // 2, ball_size, ball_siz
 
 speed = 7
 p_speed = 0
-o_speed = 0
+o_speed = speed
 ball_moving = False
 speed_x = speed_y = speed
 
@@ -83,4 +97,5 @@ while True:  # главный цикл игры
 		p_speed = 0
 
 	ball_move(ball, W, H, player, opponent)
-	player_motion(player, p_speed)
+	player_motion(player, p_speed, H)
+	opponent_motion(opponent, ball, o_speed, H)
