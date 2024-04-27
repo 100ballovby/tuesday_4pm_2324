@@ -10,6 +10,8 @@ def round_restart(obj, s_width, s_height, font, sc):
 	speed_x *= choice([-1, 1])
 	speed_y *= choice([-1, 1])
 
+	sc.fill((255, 255, 255))
+	pg.display.update()
 	cur_time = pg.time.get_ticks()  # фиксирую время, когда была вызвана функция
 	if cur_time - score_time < 700:  # прошла одна секунда
 		num_3 = font.render('3', True, (0, 0, 0))
@@ -44,8 +46,17 @@ def ball_move(obj, s_width, s_height, play_obj, opp, font, sc):
 		score_time = pg.time.get_ticks()
 		opponent_score += 1
 		round_restart(obj, s_width, s_height, font, sc)
-	elif obj.colliderect(play_obj) or obj.colliderect(opp):
-		speed_x *= -1
+
+	if obj.colliderect(play_obj):
+		if abs(obj.right - play_obj.left) < 10:
+			speed_x *= -1
+		elif abs(obj.bottom - play_obj.top) < 10 or abs(obj.top - play_obj.bottom) < 10:
+			speed_x *= -1
+	elif obj.colliderect(opp):
+		if abs(obj.left - opp.right) < 10:
+			speed_x *= -1
+		elif abs(obj.bottom - opp.top) < 10 or abs(obj.top - opp.bottom) < 10:
+			speed_x *= -1
 
 
 def player_motion(obj, s, win_h):
