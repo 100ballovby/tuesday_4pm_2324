@@ -4,27 +4,46 @@ from random import choice
 import pygame as pg
 
 
-def round_restart(obj, s_width, s_height):
-	global speed_x, speed_y
-	obj.x = s_width // 2
-	obj.y = s_height // 2
+def round_restart(obj, s_width, s_height, font, sc):
+	global speed_x, speed_y, ball_moving, score_time
+	obj.center = (s_width // 2, s_height // 2)
 	speed_x *= choice([-1, 1])
 	speed_y *= choice([-1, 1])
 
+	cur_time = pg.time.get_ticks()  # фиксирую время, когда была вызвана функция
+	if cur_time - score_time < 700:  # прошла одна секунда
+		num_3 = font.render('3', True, (0, 0, 0))
+		sc.blit(num_3, [s_width // 2, s_height // 2])
+	elif cur_time - score_time < 1400:  # прошло две секунды
+		num_2 = font.render('2', True, (0, 0, 0))
+		sc.blit(num_2, [s_width // 2, s_height // 2])
+	elif cur_time - score_time < 2100:  # прошло три секунды
+		num_1 = font.render('1', True, (0, 0, 0))
+		sc.blit(num_1, [s_width // 2, s_height // 2])
 
-def ball_move(obj, s_width, s_height, play_obj, opp):
-	global speed_x, speed_y, player_score, opponent_score  # из функции можно менять значение этих переменных
+	if cur_time - score_time < 2100:
+		speed_x, speed_y = 0, 0
+	else:
+		speed_x = speed * choice([-1, 1])
+		speed_y = speed * choice([-1, 1])
+		score_time = None
+
+
+def ball_move(obj, s_width, s_height, play_obj, opp, font, sc):
+	global speed_x, speed_y, player_score, opponent_score, score_time  # из функции можно менять значение этих переменных
 	obj.x += speed_x
 	obj.y += speed_y
 
 	if obj.top <= 0 or obj.bottom >= s_height:
 		speed_y *= -1
 	elif obj.left <= 0:
+		score_time = pg.time.get_ticks()
 		player_score += 1
-		round_restart(obj, s_width, s_height)
+		round_restart(obj, s_width, s_height, font, sc)
 	elif obj.right >= s_width:
+		score_time = pg.time.get_ticks()
 		opponent_score += 1
-		round_restart(obj, s_width, s_height)
+		round_restart(obj, s_width, s_height, font, sc)
 	elif obj.colliderect(play_obj) or obj.colliderect(opp):
 		speed_x *= -1
 
@@ -86,6 +105,7 @@ speed_x = speed_y = speed * choice([-1, 1])
 player_score = 0
 opponent_score = 0
 score_font = pg.font.SysFont('comicsans', 64)
+score_time = True
 
 pg.display.update()  # если на экране игры нужно что-то показать до начала игры
 while True:  # главный цикл игры
@@ -107,6 +127,9 @@ while True:  # главный цикл игры
 	screen.blit(player_score_text, [W // 2 + 50, H // 2])
 	screen.blit(opponent_score_text, [W // 2 - 90, H // 2])
 
+	if score_time:
+		round_restart(ball, W, H, score_font, screen)
+
 	pg.display.update()  # должен оставаться последним из отображений
 
 	keys = pg.key.get_pressed()
@@ -117,6 +140,6 @@ while True:  # главный цикл игры
 	else:
 		p_speed = 0
 
-	ball_move(ball, W, H, player, opponent)
+	ball_move(ball, W, H, player, opponent, score_font, screen)
 	player_motion(player, p_speed, H)
 	opponent_motion(opponent, ball, o_speed, H)
