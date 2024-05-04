@@ -37,22 +37,27 @@ def ball_move(obj, s_width, s_height, play_obj, opp, font, sc):
 	obj.y += speed_y
 
 	if obj.top <= 0 or obj.bottom >= s_height:
+		pong_sound.play()
 		speed_y *= -1
 	elif obj.left <= 0:
+		score_sound.play()
 		score_time = pg.time.get_ticks()
 		player_score += 1
 		round_restart(obj, s_width, s_height, font, sc)
 	elif obj.right >= s_width:
+		score_sound.play()
 		score_time = pg.time.get_ticks()
 		opponent_score += 1
 		round_restart(obj, s_width, s_height, font, sc)
 
 	if obj.colliderect(play_obj):
+		pong_sound.play()
 		if abs(obj.right - play_obj.left) < 10:
 			speed_x *= -1
 		elif abs(obj.bottom - play_obj.top) < 10 or abs(obj.top - play_obj.bottom) < 10:
 			speed_x *= -1
 	elif obj.colliderect(opp):
+		pong_sound.play()
 		if abs(obj.left - opp.right) < 10:
 			speed_x *= -1
 		elif abs(obj.bottom - opp.top) < 10 or abs(obj.top - opp.bottom) < 10:
@@ -107,6 +112,13 @@ sc_y = H // 2
 player = pg.Rect(W - 30, sc_y, pad_w, pad_h)
 opponent = pg.Rect(10, sc_y, pad_w, pad_h)
 ball = pg.Rect(sc_x - ball_size // 2, sc_y - ball_size // 2, ball_size, ball_size)
+
+# Sounds
+pg.mixer.init()
+pong_sound = pg.mixer.Sound('assets/pong.wav')
+score_sound = pg.mixer.Sound('assets/fail.wav')
+pong_sound.set_volume(0.2)
+score_sound.set_volume(0.2)
 
 speed = 7
 p_speed = 0
