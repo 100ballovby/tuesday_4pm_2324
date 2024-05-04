@@ -109,9 +109,20 @@ sc_x = W // 2
 sc_y = H // 2
 
 # Game objects
-player = pg.Rect(W - 30, sc_y, pad_w, pad_h)
-opponent = pg.Rect(10, sc_y, pad_w, pad_h)
-ball = pg.Rect(sc_x - ball_size // 2, sc_y - ball_size // 2, ball_size, ball_size)
+pl_img = pg.image.load('assets/paddle2.png')  # картинка ракетки игрока
+opp_img = pg.image.load('assets/paddle1.png')  # картинка ракетки оппонента
+b_img = pg.image.load('assets/ball.png')  # картинка мяча
+
+pl_img = pg.transform.scale(pl_img, (45, 150))
+opp_img = pg.transform.scale(opp_img, (45, 150))
+b_img = pg.transform.scale(b_img, (45, 45))
+
+player = pl_img.get_rect()
+player.center = (W - 50, H // 2)
+opponent = opp_img.get_rect()
+opponent.center = (40, H // 2)
+ball = b_img.get_rect()
+ball.center = (W // 2, H // 2)
 
 # Sounds
 pg.mixer.init()
@@ -139,10 +150,10 @@ while True:  # главный цикл игры
 	clock.tick(FPS)  # сменяет кадры в игре
 
 	screen.fill(GREEN)
-	pg.draw.rect(screen, VIOLET, player)
-	pg.draw.rect(screen, VIOLET, opponent)
 	pg.draw.aaline(screen, WHITE, [W // 2, 0], [W // 2, H])
-	pg.draw.ellipse(screen, VIOLET, ball)
+	screen.blit(pl_img, player)
+	screen.blit(opp_img, opponent)
+	screen.blit(b_img, ball)
 
 	player_score_text = score_font.render(str(player_score), True, VIOLET)
 	opponent_score_text = score_font.render(str(opponent_score), True, VIOLET)
